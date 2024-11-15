@@ -4,10 +4,12 @@ const Filters = ({ onChange, selections, sections }) => {
   return (
     <View style={styles.container}>
       {sections.map((section, index) => (
+        
         <TouchableOpacity
             onPress={() => {
                 onChange(index);
             }}
+            key = {index}
           style={{
             flex: 1 / sections.length,
             justifyContent: 'center',

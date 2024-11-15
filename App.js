@@ -10,14 +10,14 @@ import {
  } from 'react-native';
  import { Searchbar } from 'react-native-paper';
  import { dbounce } from 'lodash.debounce';
-//  import {
-//   createTable,
-//   getMenuItems,
-//   saveMenuItems,
-//   filterQueryAndCategroies,
-//  } from './database';
+ import {
+  createTable,
+  getMenuItems,
+  saveMenuItems,
+  filterQueryAndCategroies,
+ } from './database';
  import Filters from './components/Filters';
-//  import { getSectionListData, useUpdatEffect } from './utils';
+ import { getSectionListData, useUpdatEffect } from './utils';
 
  const API_URL =
   'https://raw.githubusercontent.com/Meta-Mobile-Developer-PC/Working-With-Data-API/main/menu-items-by-category.json';
@@ -38,9 +38,69 @@ export default function App() {
     sections.map(()=> false)
   );
 
+  const fetchData = async() => {
+    // 1. Implement this function
+    
+    // Fetch the menu from the API_URL endpoint. You can visit the API_URL in your browser to inspect the data returned
+    // The category field comes as an object with a property called "title". You just need to get the title value and set it under the key "category".
+    // So the server response should be slighly transformed in this function (hint: map function) to flatten out each menu item in the array,
+    return [];
+  };
+
+  useEffect(() => {
+    (async () => {
+      try {
+        await createTable();
+        let menuItems = await getMenuItems();
+        
+        // The application only fetches the menu data once from a remote URL
+        // and then stores it into a SQLite database.
+        // After that, every application restart loads the menu from the database
+        if (!menuItems.length) {
+          const menuItems = await fetchData();
+          saveMenuItems(menuItems);
+        }
+
+        const sectionListData = getSectionListData(menuItems);
+        setData(sectionListData);
+      } catch (e) {
+        // Handle error
+        Alert.alert('Error', e.message);
+      }
+    })();
+  }, []);
+
+  useUpdateEffect(() => {
+    (async () => {
+      const activeCategories = sections.filter((s, i) => {
+        // If all filters are deselected, all categories are active
+        if (filterSelections.every((item) => item === false)) {
+          return true;
+        }
+        return filterSelections[i];
+      });
+      try {
+        const menuItems = await filterByQueryAndCategories(
+          query,
+          activeCategories
+        );
+        const sectionListData = getSectionListData(menuItems);
+        setData(sectionListData);
+      } catch (e) {
+        Alert.alert(e.message);
+      }
+    })();
+  }, [filterSelections, query]);
+
   const handleSearchChange = (text) => {
     setSearchBarText(text);
     debouncedLookup(text);
+  };
+
+  const handleFiltersChange = async (index) => {
+    const arrayCopy = [...filterSelections];
+    arrayCopy[index] = !filterSelections[index];
+    setFilterSelections(arrayCopy);
   };
 
   return (
@@ -54,6 +114,22 @@ export default function App() {
         iconColor= 'white'
         inputStyle={{color: 'white'}}
         elevation={0}
+      />
+      <Filters
+        onChange={handleFiltersChange}
+        selections={filterSelections}
+        sections={sections}
+      />
+      <SectionList
+        style = {styles.SectionList}
+        sections={data}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <Item title={item.title} price={item.price} />
+        )}
+        renderSectionHeader={({ section: { title } }) => (
+          <Text style={styles.header}>{title}</Text>
+        )}
       />
     </SafeAreaView>
   );
@@ -78,5 +154,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#f9c2ff',
     padding: 20,
     marginVertical: 8,
+  },
+  header: {
+    fontSize: 24,
+    paddingVertical: 8,
+    color: '#FBDABB',
+    backgroundColor: '#495E57',
+  },
+  title: {
+    fontSize: 20,
+    color: 'white',
   },
 });
