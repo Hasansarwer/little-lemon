@@ -2,7 +2,7 @@ import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 
 const Filters = ({ onChange, selections, sections }) => {
   return (
-    <View style={styles.container}>
+    <View style={styles.filtersContainer}>
       {sections.map((section, index) => (
         
         <TouchableOpacity

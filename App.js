@@ -9,15 +9,15 @@ import {
   Alert
  } from 'react-native';
  import { Searchbar } from 'react-native-paper';
- import { dbounce } from 'lodash.debounce';
+ import debounce from 'lodash.debounce';
  import {
   createTable,
   getMenuItems,
   saveMenuItems,
-  filterQueryAndCategroies,
+  filterByQueryAndCategories,
  } from './database';
  import Filters from './components/Filters';
- import { getSectionListData, useUpdatEffect } from './utils';
+ import { getSectionListData, useUpdateEffect } from './utils';
 
  const API_URL =
   'https://raw.githubusercontent.com/Meta-Mobile-Developer-PC/Working-With-Data-API/main/menu-items-by-category.json';
@@ -26,7 +26,7 @@ const sections = ['Appetizers', 'Salads', 'Beverages'];
 const Item = ({ title, price}) => (
   <View style={styles.item}>
     <Text style={styles.title}>{title}</Text>
-    <Text style={styles.price}>{price}</Text>
+    <Text style={styles.title}>${price}</Text>
   </View>
 );
 
@@ -92,6 +92,12 @@ export default function App() {
     })();
   }, [filterSelections, query]);
 
+  const lookup = useCallback((q) => {
+    setQuery(q);
+  }, []);
+  
+  const debouncedLookup = useMemo(() => debounce(lookup, 500), [lookup]);
+
   const handleSearchChange = (text) => {
     setSearchBarText(text);
     debouncedLookup(text);
@@ -151,9 +157,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0,
   },
   item: {
-    backgroundColor: '#f9c2ff',
-    padding: 20,
-    marginVertical: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
   },
   header: {
     fontSize: 24,

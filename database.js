@@ -1,7 +1,7 @@
 import * as SQLite from 'expo-sqlite';
 import { SECTION_LIST_MOCK_DATA } from './utils';
 
-const db = SQLite.openDatabase('little_lemon');
+const db = SQLite.openDatabaseAsync('little_lemon.db');
 
 export async function createTable() {
   return new Promise((resolve, reject) => {
