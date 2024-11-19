@@ -1,21 +1,32 @@
 import * as SQLite from 'expo-sqlite';
 import { SECTION_LIST_MOCK_DATA } from './utils';
 
-const db = SQLite.openDatabaseAsync('little_lemon.db');
+const db = SQLite.openDatabaseSync('littleLemon');
 
 export async function createTable() {
-  return new Promise((resolve, reject) => {
-    db.transaction(
-      (tx) => {
-        tx.executeSql(
-          'create table if not exists menuitems (id integer primary key not null, uuid text, title text, price text, category text);'
-        );
-      },
-      reject,
-      resolve
-    );
-  });
+            await db.execAsync(
+                'create table if not exists menuitems (id integer primary key not null, uuid text, title text, price text, category text);'
+            );
 }
+            
+
+// export async function createTable() {
+//   return new Promise((resolve, reject) => {
+//     try{
+//         db.transaction(
+//             (tx) => {
+//                 tx.executeSql(
+//                     'create table if not exists menuitems (id integer primary key not null, uuid text, title text, price text, category text);'
+//                 );
+//             },
+//             reject,
+//             resolve
+//         );
+//     } catch (error) {
+//         console.error(error);
+//     }
+//   });
+// }
 
 export async function getMenuItems() {
   return new Promise((resolve) => {
@@ -33,7 +44,16 @@ export function saveMenuItems(menuItems) {
     // Check the createTable() function above to see all the different columns the table has
     // Hint: You need a SQL statement to insert multiple rows at once.
 
-    tx.executeSql( 'insert into menuitems (uuid, title, price, category) values ' + menuItems.map((item) => `('${item.id}', '${item.title}', '${item.price}', '${item.category}')`).join(','));
+    try {
+      tx.executeSql(
+        'insert into menuitems (uuid, title, price, category) values ' +
+          menuItems.map((item) => `('${item.uuid}', '${item.title}', '${item.price}', '${item.category}')`).join(',')
+      );
+      console.log('Menu items saved');
+    } catch (error) {
+        console.error(error);
+        }
+    
   });
 }
 

@@ -44,7 +44,21 @@ export function getSectionListData(data) {
   // The title of each section should be the category.
   // The data property should contain an array of menu items. 
   // Each item has the following properties: "id", "title" and "price"
-  return SECTION_LIST_MOCK_DATA;
+    console.log(data);
+    // const sections = data.reduce((acc, item) => {
+    //     const section = acc.find((section) => section.title === item.category);
+    //     if (section) {
+    //     section.data.push(item);
+    //     } else {
+    //     acc.push({
+    //         title: item.category,
+    //         data: [item],
+    //     });
+    //     }
+    //     return acc;
+    // }, []);
+    // console.log(sections);
+  return data;
 }
 
 export function useUpdateEffect(effect, dependencies = []) {
