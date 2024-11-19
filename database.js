@@ -10,24 +10,6 @@ export async function createTable() {
 }
             
 
-// export async function createTable() {
-//   return new Promise((resolve, reject) => {
-//     try{
-//         db.transaction(
-//             (tx) => {
-//                 tx.executeSql(
-//                     'create table if not exists menuitems (id integer primary key not null, uuid text, title text, price text, category text);'
-//                 );
-//             },
-//             reject,
-//             resolve
-//         );
-//     } catch (error) {
-//         console.error(error);
-//     }
-//   });
-// }
-
 export async function getMenuItems() {
   return new Promise((resolve) => {
     db.transaction((tx) => {
@@ -39,22 +21,18 @@ export async function getMenuItems() {
 }
 
 export function saveMenuItems(menuItems) {
-  db.transaction((tx) => {
-    // 2. Implement a single SQL statement to save all menu data in a table called menuitems.
+      // 2. Implement a single SQL statement to save all menu data in a table called menuitems.
     // Check the createTable() function above to see all the different columns the table has
     // Hint: You need a SQL statement to insert multiple rows at once.
 
     try {
-      tx.executeSql(
+      db.execAsync(
         'insert into menuitems (uuid, title, price, category) values ' +
-          menuItems.map((item) => `('${item.uuid}', '${item.title}', '${item.price}', '${item.category}')`).join(',')
+          menuItems.map((item) => `('${item.id}', '${item.title}', '${item.price}', '${item.category}')`).join(',')
       );
-      console.log('Menu items saved');
     } catch (error) {
         console.error(error);
         }
-    
-  });
 }
 
 /**
