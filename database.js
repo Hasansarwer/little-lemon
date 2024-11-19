@@ -11,13 +11,8 @@ export async function createTable() {
             
 
 export async function getMenuItems() {
-  return new Promise((resolve) => {
-    db.transaction((tx) => {
-      tx.executeSql('select * from menuitems', [], (_, { rows }) => {
-        resolve(rows._array);
-      });
-    });
-  });
+    const menuItems = await db.getAllAsync('select * from menuitems');
+    return menuItems;
 }
 
 export function saveMenuItems(menuItems) {
