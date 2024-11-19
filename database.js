@@ -11,7 +11,7 @@ export async function createTable() {
             
 
 export async function getMenuItems() {
-    const menuItems = await db.getAllAsync('select * from menuitems');
+    const menuItems = await db.getAllAsync('select * from menuitems'); // getFirstAsync getEachAsync
     return menuItems;
 }
 
@@ -21,7 +21,7 @@ export function saveMenuItems(menuItems) {
     // Hint: You need a SQL statement to insert multiple rows at once.
 
     try {
-      db.execAsync(
+      db.execAsync( // runAsync
         'insert into menuitems (uuid, title, price, category) values ' +
           menuItems.map((item) => `('${item.id}', '${item.title}', '${item.price}', '${item.category}')`).join(',')
       );
