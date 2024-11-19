@@ -106,8 +106,7 @@ export default function App() {
     debouncedLookup(text);
   };
 
-  const handleFiltersChange = async (index) => {
-    conaole.log(index);
+  const handleFiltersChange = (index) => {
     const arrayCopy = [...filterSelections];
     arrayCopy[index] = !filterSelections[index];
     setFilterSelections(arrayCopy);
